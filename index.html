@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCL-90</title>
+  <style>
+    @media only screen and (max-width: 500px) {
+      .container  {
+        width: 70%!important;
+      }
+    }
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    .page {
+      width: 100vw;
+      height: 100vh;
+      background-color: lightblue;
+    }
+    .container {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #fff;
+      width: 35%;
+      height: 50%;
+      padding: 30px;
+      border-radius: 10px;
+    }
+    .question {
+      line-height: 30px;
+      font-weight: 700;
+    }
+    li {
+      padding: 0 20px;
+      margin: 10px;
+      border-radius: 10px;
+      list-style-type: none;
+      line-height: 50px;
+      cursor: pointer;
+      user-select: none;
+      background-color: #fafafa;
+      color: #767676;
+      transition: background .5s linear;
+    }
+    .end {
+      display: none;
+    }
+    .num_current {
+      font-weight: 700;
+      font-size: 30px;
+    }
+    .num_total {
+      color: #c5c5c5;
+    }
+    .active {
+      background-color: rgba(173, 216, 230,.7);
+      box-shadow: 0 2px 4px 0 rgba(0,0,0,.15);
+      font-weight: 700;
+      color: #add8e6;
+    }
+    .btngroup {
+      position: absolute;
+      bottom: -40px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 700;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="container">
+      <span class="num_current"></span>
+      <span class="num_total">/90</span>
+      <p class="question"></p>
+      <ul>
+        <li onclick="handleClick(1)">A、从无</li>
+        <li onclick="handleClick(2)">B、很轻</li>
+        <li onclick="handleClick(3)">C、中等</li>
+        <li onclick="handleClick(4)">D、偏重</li>
+        <li onclick="handleClick(5)">E、严重</li>
+      </ul>
+      <div class="btngroup">
+        <span class="prebtn" onclick="handlePre()">&lt;&lt; 上一题</span>
+        <span class="nextbtn" onclick="handleNext()">下一题 &gt;&gt;</span>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+  const questionStr = '头痛；神经过敏，心中不踏实；头脑中有不必要的想法或字句盘旋；头晕或晕倒；对异性的兴趣减退；对旁人责备求全；感到别人能控制您的思想；责怪别人制造麻烦；忘性大；担心自己的衣饰整齐及仪态的端正；容易烦恼和激动；胸痛；害怕空旷的场所或街道；感到自己的精力下降，活动减慢；想结束自己的生命；听到旁人听不到的声音；发抖；感到大多数人都不可信任；胃口不好；容易哭泣；同异性相处时感到害羞不自在；感到受骗，中了圈套或有人想抓住您；无缘无故地突然感到害怕；自己不能控制地大发脾气；怕单独出门；经常责怪自己；腰痛；感到难以完成任务；感到孤独；感到苦闷；过分担忧；对事物不感兴趣；感到害怕；您的感情容易受到伤害；旁人能知道您的私下想法；感到别人不理解您、不同情您；感到人们对您不友好，不喜欢您；做事必须做得很慢以保证做得正确；心跳得很厉害；恶心或胃部不舒服；感到比不上他人；肌肉酸痛；感到有人在监视您、谈论您；难以入睡；做事必须反复检查；难以做出决定；怕乘电车、公共汽车、地铁或火车；呼吸有困难；一阵阵发冷或发热；因为感到害怕而避开某些东西、场合或活动；脑子变空了；身体发麻或刺痛；喉咙有梗塞感；感到前途没有希望；不能集中注意力；感到身体的某一部分软弱无力；感到紧张或容易紧张；感到手或脚发重；想到死亡的事；吃得太多；当别人看着您或谈论您时感到不自在；有一些不属于您自己的想法；有想打人或伤害他人的冲动；醒得太早；必须反复洗手、点数；睡得不稳不深；有想摔坏或破坏东西的想法；有一些别人没有的想法；感到对别人神经过敏；在商店或电影院等人多的地方感到不自在；感到任何事情都很困难；一阵阵恐惧或惊恐；感到公共场合吃东西很不舒服；经常与人争论；单独一人时神经很紧张；别人对您的成绩没有做出恰当的评价；即使和别人在一起也感到孤单；感到坐立不安心神不定；感到自己没有什么价值；感到熟悉的东西变成陌生或不像是真的；大叫或摔东西；害怕会在公共场合晕倒；感到别人想占您的便宜；为一些有关性的想法而很苦恼；您认为应该因为自己的过错而受到惩罚；感到要很快把事情做完；感到自己的身体有严重问题；从未感到和其他人很亲近；感到自己有罪；感到自己的脑子有毛病；'
+  const endMessage = '按中国常模结果，如果您的SCL90总分超过160分，单项均分超过2分就应作进一步检查，标准分为大于200分说明你有很明显的心理问题，可求助于心理咨询，大于250分则比较严重，需要作医学上的详细检查，很可能要做针对性的心理治疗或在医生的指导下服药。'
+  const questionArr = questionStr.split('；').map((item, currentIndex)=>{
+    return {
+      index: currentIndex,
+      question: item,
+      point: null
+    }
+  })
+  const groupedQues = [
+    {name: '躯体化', quesIndexArr: [0, 3, 11, 26, 39, 41, 47, 48, 51, 52, 55, 57], total: 0},
+    {name: '强迫症状', quesIndexArr: [2, 8, 9, 27, 37, 44, 45, 50, 54, 64], total: 0},
+    {name: '人际关系敏感', quesIndexArr: [5, 20, 33, 35, 36, 40, 60, 68, 72], total: 0},
+    {name: '抑郁症状', quesIndexArr: [4, 13, 14, 19, 21, 25, 28, 29, 30, 31, 53, 70, 78], total: 0},
+    {name: '焦虑症状', quesIndexArr: [1, 16, 22, 32, 38, 56, 71, 77, 79, 85], total: 0},
+    {name: '敌对症状', quesIndexArr: [10, 23, 62, 66, 73, 80], total: 0},
+    {name: '恐怖症状', quesIndexArr: [12, 24, 46, 49, 69, 74, 81], total: 0},
+    {name: '偏执症状', quesIndexArr: [7, 17, 42, 67, 75, 82], total: 0},
+    {name: '精神病性', quesIndexArr: [6, 15, 34, 61, 76, 83, 84, 86, 87, 89], total: 0},
+    {name: '睡眠饮食', quesIndexArr: [18, 43, 58, 59, 63, 65, 88], total: 0},
+  ]
+  // var totalPoint = 0
+  var currentIndex = 0
+
+  function getGroupedPoint() {
+    questionArr.map((item) => {
+      groupedQues.map(v => {
+        v.quesIndexArr.includes(item.index) && (v.total+=item.point)
+      })
+    })
+  }
+  function updateView() {
+    document.querySelector('.question').innerHTML = questionArr[currentIndex].question
+    document.querySelector('.num_current').innerHTML = `${currentIndex+1}`
+  }
+  function handleClick(point) {
+    // totalPoint = Add(totalPoint, point)
+    /* questionArr[currentIndex].point = point
+    // console.log(totalPoint);
+    currentIndex = currentIndex+1
+    updateView() */
+    clearActive()
+    questionArr[currentIndex].point = point
+    let selectElement = document.querySelectorAll('li')[(questionArr[currentIndex].point)-1]
+    selectElement && (selectElement.className = 'active')
+    setTimeout(()=>{
+      handleNext()
+      if(currentIndex== 90) {
+        let totalPoint = 0
+        questionArr.map(v=> {
+          // totalPoint = Add(totalPoint, v.point)
+          totalPoint += v.point
+        })
+        getGroupedPoint()
+        let str = ''
+        groupedQues.map(v => str+=`${v.name}：${v.total}分（平均分：${(v.total/v.quesIndexArr.length).toFixed(2)}）<br /> `)
+        return document.querySelector('.container').innerHTML = `您的SCL90总分为：${totalPoint}分，单项均分为：${(totalPoint/90).toFixed(2)}分。<br />${str}<br /> ${endMessage}`
+      }
+    }, 600)
+  }
+  function handlePre() {
+    if(currentIndex==0) return
+    clearActive()
+    currentIndex = currentIndex-1
+    let selectElement = document.querySelectorAll('li')[(questionArr[currentIndex].point)-1]
+    selectElement && (selectElement.className = 'active')
+    updateView()
+  }
+  function handleNext() {
+    if(questionArr[currentIndex]?.point) {
+      clearActive()
+      currentIndex = currentIndex+1
+      updateView()
+      let selectElement = document.querySelectorAll('li')[(questionArr[currentIndex].point)-1]
+      selectElement && (selectElement.className = 'active')
+    }
+  }
+  function clearActive() {
+    for(let currentIndex=0; currentIndex<document.querySelectorAll('li').length; currentIndex++) {
+      document.querySelectorAll('li')[currentIndex].className = ''
+    }
+  }
+  /* const Add = (num1, num2) => {
+    let r1, r2, m
+    try {
+        r1 = `${num1}`.split('.')[1].length
+    } catch (e) {
+        r1 = 0
+    }
+    try {
+        r2 = `${num2}`.split('.')[1].length
+    } catch (e) {
+        r2 = 0
+    }
+    m = Math.pow(10, Math.max(r1, r2))
+    return Math.round(num1 * m + num2 * m) / m
+  } */
+  /* li.map((item,currentIndex)=>{
+    item.addEventListener('click', this.handleClick(currentIndex+1))
+  }) */
+  updateView()
+</script>
+</html>
